@@ -71,7 +71,7 @@ public class TelescopeController extends AbstractController implements Serializa
      */
     public void rowSelect() {
 	try {
-	    System.out.println(" RowSelect --- TELESCOPE ID " + telescope.getId());
+	    System.out.println(" RowSelect ---  TELESCOPE ID " + telescope.getId());
 	    telescopeMaskController.setTelescope(telescope);
 	    telescopeMaskController.setSelectedInfo("");
 	} catch (NullPointerException e) {
