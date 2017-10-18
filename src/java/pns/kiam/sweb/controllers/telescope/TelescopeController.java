@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -21,6 +22,7 @@ import org.primefaces.event.RowEditEvent;
 import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.telescopes.TelescopeHorizontMask;
 import pns.kiam.sweb.controllers.AbstractController;
+import pns.kiam.sweb.controllers.app.XXParserSWEB;
 import pns.kiam.sweb.utils.MessageUtils;
 
 /**
@@ -51,6 +53,7 @@ public class TelescopeController extends AbstractController implements Serializa
             freshUploadComplete = false;
             numbersOfTelescopes = telescopeList.size();
         } catch (NullPointerException e) {
+        } catch (PersistenceException ee) {
         }
     }
 
