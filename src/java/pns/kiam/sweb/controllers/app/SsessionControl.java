@@ -32,11 +32,23 @@ public class SsessionControl implements HttpSessionListener, Serializable {
     private FacesContext fContext;
     private HttpSession session;
 
+    private boolean finished = false;
+
+    /**
+     * Get the value of finished
+     *
+     * @return the value of finished
+     */
+    public boolean isFinished() {
+        return finished;
+    }
+
     public void init() {
 
         fContext = FacesContext.getCurrentInstance();
         session = (HttpSession) fContext.getExternalContext().getSession(true);
-        System.out.println("Session Created");
+        System.out.println(new Date() + "   Session Created  " + (fContext == null));
+        finished = false;
     }
 
     public int getTimeout() {
@@ -45,6 +57,10 @@ public class SsessionControl implements HttpSessionListener, Serializable {
 
     public HttpSession getSession() {
         return session;
+    }
+
+    public FacesContext getFContext() {
+        return fContext;
     }
 
     public void setTimeout(int time) {
@@ -66,30 +82,6 @@ public class SsessionControl implements HttpSessionListener, Serializable {
         }
     }
 
-    public void sessionDown() {
-//        FacesContext fContext = FacesContext.getCurrentInstance();
-//        HttpSession session = (HttpSession) fContext.getExternalContext().getSession(true);
-
-        long currTM = System.currentTimeMillis() / 1000;
-        long sessTM = currTM - session.getCreationTime() / 1000;
-        long accsTM = currTM - session.getLastAccessedTime() / 1000;
-        long freeTM = session.getMaxInactiveInterval() - accsTM;
-//        double frac = (session.getLastAccessedTime() - session.getCreationTime()) / session.getMaxInactiveInterval();
-        System.out.println("   =========>>>session creationTime: " + (session.getCreationTime() / 1000) + "  "
-                + " ; sessTM  " + sessTM + ""
-                + " accsTM " + accsTM + ""
-                + "  freeTM  " + freeTM
-        );
-
-        if (freeTM < 10) {
-            System.out.println(freeTM + " ---------------  " + (session.getMaxInactiveInterval() - 10));
-        }
-        if (freeTM <= 5) {
-            session.invalidate();
-        }
-
-    }
-
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
@@ -102,7 +94,13 @@ public class SsessionControl implements HttpSessionListener, Serializable {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        System.out.println("   SessionStopped!" + new Date());
+        FacesContext fc = FacesContext.getCurrentInstance();
+
+        System.out.println("   SessionStopped!    " + new Date() + "     fc==null: " + (fc.getCurrentInstance() == null) + ""
+                + "  se: " + se.getSession().getId()
+                + "  session " + (session == null));
+
+        finished = true;
 //        try {
 //            FacesContext.getCurrentInstance().getExternalContext().redirect("/index.xhtml");
 //        } catch (IOException ex) {
