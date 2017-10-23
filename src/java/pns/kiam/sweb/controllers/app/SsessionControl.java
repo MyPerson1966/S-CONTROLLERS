@@ -14,10 +14,13 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.ejb.LocalBean;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -29,26 +32,22 @@ public class SsessionControl implements HttpSessionListener, Serializable {
 
     private int timeout = -1;
 
-    private FacesContext fContext;
     private HttpSession session;
 
-    private boolean finished = false;
+    private boolean active = false;
 
     /**
-     * Get the value of finished
+     * Get the value of active
      *
-     * @return the value of finished
+     * @return the value of active
      */
-    public boolean isFinished() {
-        return finished;
+    public boolean isActive() {
+        return active;
     }
 
     public void init() {
-
-        fContext = FacesContext.getCurrentInstance();
-        session = (HttpSession) fContext.getExternalContext().getSession(true);
-        System.out.println(new Date() + "   Session Created  " + (fContext == null));
-        finished = false;
+        contextControl();
+        active = true;
     }
 
     public int getTimeout() {
@@ -59,18 +58,22 @@ public class SsessionControl implements HttpSessionListener, Serializable {
         return session;
     }
 
-    public FacesContext getFContext() {
-        return fContext;
-    }
-
     public void setTimeout(int time) {
-        if (time == -1) {
+        if (time < 0) {
             time = Integer.MAX_VALUE;
         }
-        timeout = time;
+        timeout = time * 1000;
         session.setMaxInactiveInterval(time);
-        System.out.println(" session is null " + (session == null));
-        System.out.println("Session: " + session.getId() + "   " + session.getCreationTime());
+        System.out.println("    ->> session Timeout result: " + sessionLiveTo() + "  Timeout is: " + session.getMaxInactiveInterval());
+        active = true;
+    }
+
+    public void setTimeout(int time, boolean inMillisec) {
+
+        if (!inMillisec) {
+            time = time / 100;
+        }
+        setTimeout(time);
     }
 
     public void sessionDestroy() {
@@ -86,25 +89,38 @@ public class SsessionControl implements HttpSessionListener, Serializable {
     // "Insert Code > Add Business Method")
     @Override
     public void sessionCreated(HttpSessionEvent se) {
+        if (timeout < 0) {
+            timeout = Integer.MAX_VALUE;
+        }
+        session = se.getSession();
+        session.setMaxInactiveInterval(timeout);
+        System.out.println("Session Start result: " + sessionLiveTo() + " sessID " + session.getId() + "   " + active);
 
-        Date startDate = new Date();
-        Date endDate = new Date(System.currentTimeMillis() + timeout);
-        System.out.println("Create a HTTP Session at " + startDate + "  to " + endDate);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        FacesContext fc = FacesContext.getCurrentInstance();
+        active = false;
+        session = null;
 
-        System.out.println("   SessionStopped!    " + new Date() + "     fc==null: " + (fc.getCurrentInstance() == null) + ""
+//
+        System.out.println("   Session  Stopped!    " + new Date() + ""
                 + "  se: " + se.getSession().getId()
-                + "  session " + (session == null));
+                + "  session " + (session == null) + "       active:  " + active);
 
-        finished = true;
-//        try {
-//            FacesContext.getCurrentInstance().getExternalContext().redirect("/index.xhtml");
-//        } catch (IOException ex) {
-//            Logger.getLogger(SsessionControl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
+
+    public void contextControl() {
+        FacesContext fContext = FacesContext.getCurrentInstance();
+        session = (HttpSession) fContext.getExternalContext().getSession(true);
+
+    }
+
+    public String sessionLiveTo() {
+        Date startDate = new Date();
+        Date endDate = new Date(System.currentTimeMillis() + timeout);
+        String res = " HTTP Session starts at " + startDate + "  finises at  " + endDate;
+        return res;
+    }
+
 }
