@@ -93,20 +93,18 @@ public class XXParserSWEB extends SXParser {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        // The value of the element
         String elementValue = new String(ch, start, length);
 //        System.out.println("thisElement :  " + thisElement + ";  Value:    " + elementValue + "  start " + start + "   length " + length + " "
 //                + "           thisElement.length()  " + thisElement.length() + " // " + thisElement.trim().length() + "  "
 //                + "   atts.getValue(0) " + atts.getValue(0));
 
         if (thisElement.trim().equals("login")) {
-            ;
             login = elementValue;
         }
         if (thisElement.trim().equals("password")) {
             password = elementValue;
         }
-        //        System.out.println(" L O G I N   " + login);
-        //        System.out.println(" P A S S W O R D    " + password);
     }
 
     @Override
