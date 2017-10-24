@@ -5,34 +5,66 @@
  */
 package pns.kiam.sweb.controllers.app;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.ejb.LocalBean;
+import javax.ejb.Schedule;
+import javax.ejb.Stateless;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 import org.primefaces.context.RequestContext;
 
 /**
  *
  * @author User
  */
-@Stateful
+@Stateless
 @LocalBean
 public class SsessionControl implements HttpSessionListener, Serializable {
 
     private int timeout = -1;
 
     private HttpSession session;
+
+    private boolean needToDelogin = false;
+
+    public boolean isNeedToDelogin() {
+        return needToDelogin;
+    }
+
+    public void setNeedToDelogin(boolean needToDelogin) {
+        this.needToDelogin = needToDelogin;
+    }
 
     private boolean active = false;
 
@@ -46,7 +78,8 @@ public class SsessionControl implements HttpSessionListener, Serializable {
     }
 
     public void init() {
-        contextControl();
+        FacesContext fContext = FacesContext.getCurrentInstance();
+        session = (HttpSession) fContext.getExternalContext().getSession(true);
         active = true;
     }
 
@@ -107,12 +140,6 @@ public class SsessionControl implements HttpSessionListener, Serializable {
         System.out.println("   Session  Stopped!    " + new Date() + ""
                 + "  se: " + se.getSession().getId()
                 + "  session " + (session == null) + "       active:  " + active);
-
-    }
-
-    public void contextControl() {
-        FacesContext fContext = FacesContext.getCurrentInstance();
-        session = (HttpSession) fContext.getExternalContext().getSession(true);
 
     }
 
