@@ -13,7 +13,11 @@ import javax.ejb.Stateful;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.users.User;
+import pns.kiam.entities.users.UserType;
 import pns.kiam.sweb.controllers.AbstractController;
 import pns.kiam.sweb.utils.MessageUtils;
 
@@ -24,18 +28,29 @@ import pns.kiam.sweb.utils.MessageUtils;
 @Stateful
 public class UserController extends AbstractController implements Serializable {
 
+    private List<Telescope> telescopeList = new ArrayList<>();
+
     private User user;
-    private List<User> userList = new ArrayList<>();
+    private List<User> userList;
+
     private CriteriaQuery<User> cq;
 
     private String login = "", passw = "";
+
+    @Size(max = 1054)
     private String comment = "";
-    ;
+
+    @NotNull
+    private UserType userType;
 
     private boolean active = true;
 
     @PostConstruct
     public void init() {
+	userType = new UserType();
+	if (telescopeList == null) {
+	    telescopeList = new ArrayList<>();
+	}
 	try {
 	    cb = em.getCriteriaBuilder();
 	    cq = cb.createQuery(User.class);
@@ -104,6 +119,22 @@ public class UserController extends AbstractController implements Serializable {
 
     public void setActive(boolean active) {
 	this.active = active;
+    }
+
+    public UserType getUserType() {
+	return userType;
+    }
+
+    public void setUserType(UserType userType) {
+	this.userType = userType;
+    }
+
+    public List<Telescope> getTelescopeList() {
+	return telescopeList;
+    }
+
+    public void setTelescopeList(List<Telescope> telescopeList) {
+	this.telescopeList = telescopeList;
     }
 
     /**
