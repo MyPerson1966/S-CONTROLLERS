@@ -36,7 +36,7 @@ public class UserController extends AbstractController implements Serializable {
 
     private CriteriaQuery<User> cq;
 
-    private String login = "", passw = "";
+    private String login = "", email = "", passw = "";
 
     @Size(max = 1054)
     private String comment = "";
@@ -99,6 +99,14 @@ public class UserController extends AbstractController implements Serializable {
 	this.login = login;
     }
 
+    public String getEmail() {
+	return email;
+    }
+
+    public void setEmail(String email) {
+	this.email = email;
+    }
+
     public String getPassw() {
 	return passw;
     }
@@ -145,16 +153,10 @@ public class UserController extends AbstractController implements Serializable {
      * @param random if true , than the new pw is not empty
      */
     public void generatePW(boolean random) {
-	if (random) {
-	    int k = pns.utils.numbers.RInts.rndInt(10, 14);
-	    for (int i = 0; i < 10; i++) {
-		passw += pns.utils.strings.RStrings.rndLetterString();
-	    }
-	    passw = passw.substring(0, k);
-	} else {
-	    passw = "";
-	}
-	//System.out.println("  passw " + passw);
+	passw = pns.utils.strings.RStrings.rndLetterStringRNDLen(9, 15, 30, random, true);
+	login = pns.utils.strings.RStrings.rndLetterStringRNDLen(3, 5, 30, random, false);
+	login += pns.utils.strings.RStrings.lastMoment();
+	login = pns.utils.numbers.RInts.rndInt(100, 998) + login;
     }
 
     public String validateUser() {
