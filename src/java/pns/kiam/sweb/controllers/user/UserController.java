@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -25,7 +25,8 @@ import pns.kiam.sweb.utils.MessageUtils;
  *
  * @author PSEVO tochka
  */
-@Stateful
+//@SessionScoped
+@Stateless
 public class UserController extends AbstractController implements Serializable {
 
     private List<Telescope> telescopeList = new ArrayList<>();
@@ -47,6 +48,7 @@ public class UserController extends AbstractController implements Serializable {
 
     @PostConstruct
     public void init() {
+	login = passw = "";
 	userType = new UserType();
 	if (telescopeList == null) {
 	    telescopeList = new ArrayList<>();
