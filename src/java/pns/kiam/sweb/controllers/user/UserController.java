@@ -171,6 +171,10 @@ public class UserController extends AbstractController implements Serializable {
 	}
     }
 
+    public void persistUser(User u) {
+	persist(u);
+    }
+
     /**
      * tests is a user exist or not
      *
