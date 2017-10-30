@@ -85,7 +85,7 @@ public class UserTypeController extends AbstractController implements Serializab
     public void rowSelectAction(UserType t) {
 	userType = t;
 	(new MessageUtils()).messageGenerator("User Type Selected", userType.toString());
-	System.out.println("  Selected " + t);
+	//System.out.println("  Selected " + t);
     }
 
     /**

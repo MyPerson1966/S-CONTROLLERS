@@ -13,13 +13,9 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.users.User;
-import pns.kiam.entities.users.UserType;
 import pns.kiam.sweb.controllers.AbstractController;
-import pns.kiam.sweb.utils.MessageUtils;
 
 /**
  *
@@ -33,34 +29,41 @@ public class UserController extends AbstractController implements Serializable {
 
     private User user;
     private List<User> userList;
-
     private CriteriaQuery<User> cq;
 
     private String login = "", email = "", passw = "";
-
-    @Size(max = 1054)
-    private String comment = "";
-
-    @NotNull
-    private UserType userType;
-
-    private boolean active = true;
+//    @Size(max = 1054)
+//    private String comment = "";
+//
+//    @NotNull
+//    private UserType userType;
+//
+//    private boolean active = true;
 
     @PostConstruct
     public void init() {
 	login = passw = "";
-	userType = new UserType();
-	if (telescopeList == null) {
-	    telescopeList = new ArrayList<>();
-	}
 	try {
-	    cb = em.getCriteriaBuilder();
-	    cq = cb.createQuery(User.class);
+//	    cb = em.getCriteriaBuilder();
+//	    cq = cb.createQuery(User.class);
+	    abstractInit(User.class);
 	    userList = loadAllUsers();
-	    generatePW(true);
 	} catch (NullPointerException e) {
-	}
 
+	}
+	generatePW(true);
+    }
+
+    /**
+     * generate a new password for a user
+     *
+     * @param random if true , than the new pw is not empty
+     */
+    public void generatePW(boolean random) {
+	passw = pns.utils.strings.RStrings.rndLetterStringRNDLen(9, 15, 30, random, true);
+	login = pns.utils.strings.RStrings.rndLetterStringRNDLen(3, 5, 30, random, false);
+	login += pns.utils.strings.RStrings.lastMoment();
+	login = pns.utils.numbers.RInts.rndInt(100, 998) + login;
     }
 
     private List loadAllUsers() {
@@ -71,7 +74,7 @@ public class UserController extends AbstractController implements Serializable {
 	TypedQuery<User> Q = em.createQuery(cq);
 	System.out.println(" " + Q.getResultList().size());
 
-	(new MessageUtils()).messageGenerator(" User Type Number is: " + Q.getResultList().size(), "");
+//	(new MessageUtils()).messageGenerator(" User Type Number is: " + Q.getResultList().size(), "");
 	return Q.getResultList();
     }
 
@@ -91,6 +94,8 @@ public class UserController extends AbstractController implements Serializable {
 	this.userList = userList;
     }
 
+    //***********************************************************************
+    /*
     public String getLogin() {
 	return login;
     }
@@ -146,54 +151,41 @@ public class UserController extends AbstractController implements Serializable {
     public void setTelescopeList(List<Telescope> telescopeList) {
 	this.telescopeList = telescopeList;
     }
-
-    /**
-     * generate a new password for a user
-     *
-     * @param random if true , than the new pw is not empty
-     */
-    public void generatePW(boolean random) {
-	passw = pns.utils.strings.RStrings.rndLetterStringRNDLen(9, 15, 30, random, true);
-	login = pns.utils.strings.RStrings.rndLetterStringRNDLen(3, 5, 30, random, false);
-	login += pns.utils.strings.RStrings.lastMoment();
-	login = pns.utils.numbers.RInts.rndInt(100, 998) + login;
-    }
-
-    public String validateUser() {
-	System.out.println("userList.size() == 0 " + (userList.size() == 0));
-	if (userList.size() == 0) {
-	    return "/users/usercreate";
-	}
-	if (userExists()) {
-	    return "/users/userdata";
-	} else {
-	    return "index";
-	}
-    }
-
-    public void persistUser(User u) {
-	persist(u);
-    }
-
-    /**
-     * tests is a user exist or not
-     *
-     * @return
-     */
-    private boolean userExists() {
-	if (userList.size() == 0) {
-	    return false;
-	}
-	int npp = 0;
-	for (int k = 0; k < userList.size(); k++) {
-	    User tmp = userList.get(k);
-	    if (login.equals(tmp.getEmail()) && passw.equals(tmp.getPassword())) {
-		npp++;
-	    }
-	}
-	return npp == 1;
-    }
-
+//
+//    public String validateUser() {
+//	System.out.println("userList.size() == 0 " + (userList.size() == 0));
+//	if (userList.size() == 0) {
+//	    return "/users/usercreate";
+//	}
+//	if (userExists()) {
+//	    return "/users/userdata";
+//	} else {
+//	    return "index";
+//	}
+//    }
+//
+//    public void persistUser(User u) {
+//	persist(u);
+//    }
+//
+//    /**
+//     * tests is a user exist or not
+//     *
+//     * @return
+//     */
+//    private boolean userExists() {
+//	if (userList.size() == 0) {
+//	    return false;
+//	}
+//	int npp = 0;
+//	for (int k = 0; k < userList.size(); k++) {
+//	    User tmp = userList.get(k);
+//	    if (login.equals(tmp.getEmail()) && passw.equals(tmp.getPassword())) {
+//		npp++;
+//	    }
+//	}
+//	return npp == 1;
+//    }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 }
