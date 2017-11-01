@@ -9,73 +9,63 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import pns.kiam.entities.telescopes.Telescope;
+import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 import pns.kiam.entities.users.User;
+import pns.kiam.entities.users.UserType;
 import pns.kiam.sweb.controllers.AbstractController;
+import pns.kiam.sweb.utils.MessageUtils;
 
 /**
  *
  * @author PSEVO tochka
  */
-//@SessionScoped
 @Stateless
 public class UserController extends AbstractController implements Serializable {
 
-    private List<Telescope> telescopeList = new ArrayList<>();
+    @EJB
+    private UserTypeController userTypeController;
 
     private User user;
-    private List<User> userList;
+    private List<User> userList = new ArrayList<>();
     private CriteriaQuery<User> cq;
 
-    private String login = "", email = "", passw = "";
-//    @Size(max = 1054)
-//    private String comment = "";
-//
-//    @NotNull
-//    private UserType userType;
-//
-//    private boolean active = true;
+    private String selectedInfo = "";
+    private int numbersOfTelescopes = 0;
+    private boolean freshUploadComplete;
 
     @PostConstruct
-    public void init() {
-	login = passw = "";
+    public void initial() {
 	try {
-//	    cb = em.getCriteriaBuilder();
-//	    cq = cb.createQuery(User.class);
-	    abstractInit(User.class);
+	    abstractInit();
+	    cq = cb.createQuery(User.class);
+	    cq = cb.createQuery(User.class);
 	    userList = loadAllUsers();
+//	    freshUploadComplete = false;
+//	    numbersOfTelescopes = telescopeList.size();
 	} catch (NullPointerException e) {
-
 	}
-	generatePW(true);
-    }
-
-    /**
-     * generate a new password for a user
-     *
-     * @param random if true , than the new pw is not empty
-     */
-    public void generatePW(boolean random) {
-	passw = pns.utils.strings.RStrings.rndLetterStringRNDLen(9, 15, 30, random, true);
-	login = pns.utils.strings.RStrings.rndLetterStringRNDLen(3, 5, 30, random, false);
-	login += pns.utils.strings.RStrings.lastMoment();
-	login = pns.utils.numbers.RInts.rndInt(100, 998) + login;
     }
 
     private List loadAllUsers() {
 
 	Root<User> res = cq.from(User.class);
 	cq.select(res);
+
 	cq.orderBy(cb.asc(res.get("id")));
 	TypedQuery<User> Q = em.createQuery(cq);
-	System.out.println(" " + Q.getResultList().size());
-
-//	(new MessageUtils()).messageGenerator(" User Type Number is: " + Q.getResultList().size(), "");
+	rowDeSelect();
+//	(new MessageUtils()).messageGenerator("Total Number of Telescopes  is: " + Q.getResultList().size(), "");
 	return Q.getResultList();
+    }
+
+    public String getSelectedInfo() {
+	return selectedInfo;
     }
 
     public User getUser() {
@@ -94,98 +84,172 @@ public class UserController extends AbstractController implements Serializable {
 	this.userList = userList;
     }
 
-    //***********************************************************************
-    /*
-    public String getLogin() {
-	return login;
-    }
-
-    public void setLogin(String login) {
-	this.login = login;
-    }
-
-    public String getEmail() {
-	return email;
-    }
-
-    public void setEmail(String email) {
-	this.email = email;
-    }
-
-    public String getPassw() {
-	return passw;
-    }
-
-    public void setPassw(String passw) {
-	this.passw = passw;
-    }
-
-    public String getComment() {
-	return comment;
-    }
-
-    public void setComment(String comment) {
-	this.comment = comment;
-    }
-
-    public boolean isActive() {
-	return active;
-    }
-
-    public void setActive(boolean active) {
-	this.active = active;
-    }
-
-    public UserType getUserType() {
-	return userType;
-    }
-
-    public void setUserType(UserType userType) {
-	this.userType = userType;
-    }
-
-    public List<Telescope> getTelescopeList() {
-	return telescopeList;
-    }
-
-    public void setTelescopeList(List<Telescope> telescopeList) {
-	this.telescopeList = telescopeList;
-    }
-//
-//    public String validateUser() {
-//	System.out.println("userList.size() == 0 " + (userList.size() == 0));
-//	if (userList.size() == 0) {
-//	    return "/users/usercreate";
+    /**
+     * Row Select action
+     */
+    public void rowSelect(SelectEvent event) {
+	user = (User) event.getObject();
+	System.out.println("   " + user);
+//	try {
+//	    System.out.println(" RowSelect ---  TELESCOPE ID " + telescope.getId());
+//	    telescopeMaskController.setTelescope(telescope);
+//	    telescopeMaskController.setSelectedInfo("");
+//	} catch (NullPointerException e) {
 //	}
-//	if (userExists()) {
-//	    return "/users/userdata";
-//	} else {
-//	    return "index";
-//	}
-//    }
-//
-//    public void persistUser(User u) {
-//	persist(u);
-//    }
-//
-//    /**
-//     * tests is a user exist or not
-//     *
-//     * @return
-//     */
-//    private boolean userExists() {
-//	if (userList.size() == 0) {
-//	    return false;
-//	}
-//	int npp = 0;
-//	for (int k = 0; k < userList.size(); k++) {
-//	    User tmp = userList.get(k);
-//	    if (login.equals(tmp.getEmail()) && passw.equals(tmp.getPassword())) {
-//		npp++;
-//	    }
-//	}
-//	return npp == 1;
-//    }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    }
+
+    /**
+     * Row Select action
+     */
+    /**
+     * Row Select action by given Telescope
+     *
+     * @param t
+     */
+    public void rowSelectAction(User u) {
+	user = u;
+
+    }
+
+    /**
+     * Deselect the Selected Row
+     */
+    public void rowDeSelect() {
+	user = null;
+	selectedInfo = "";
+
+    }
+
+    /**
+     * Removes the record(s) from Telescope table. if the "all " parameter is
+     * true, removes all records else it is false removes only selected record
+     * The represenation data in the lisr remove correspondently
+     *
+     * @param all
+     */
+    public void removeRow(boolean all) {
+	System.out.println("  Deleting telescope ALL=" + all);
+	deleteUser(all);
+	userList = loadAllUsers();
+	rowDeSelect();
+    }
+
+    public void prepareCreation() {
+	User u = new User();
+	userList.add(u);
+
+	(new MessageUtils()).messageGenerator("Prepare to Create a new User", "");
+	System.out.println(" Prepare to create a new  user " + u);
+//	rowDeSelect();
+
+    }
+
+    /**
+     * Editing Table's row
+     *
+     * @param event
+     */
+    public void onRowEdit(RowEditEvent event) {
+
+	user = (User) event.getObject();
+	if (user.getId() == null) {
+	    UserType ut = userTypeController.seachForType(user.getUserType().getId());
+	    System.out.println("     ut: " + ut);
+	    user.setUserType(ut);
+	    System.out.println("   New User  " + user + "  saved  " + System.lineSeparator()
+		    + "  user.getUserType().getName() " + user.getUserType().getName() + ""
+		    + "  user.getUserType().getBinRights() " + user.getUserType().getBinRights() + ""
+		    + " user.getUserType().getId() " + user.getUserType().getId());
+	    //persist(user.getUserType());
+	    persist(user);
+	    (new MessageUtils()).messageGenerator("New User Created", ((User) event.getObject()).toString());
+	} else {
+//	    merge(user);
+//	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
+	}
+//	userList = loadAllUsers();
+//	rowDeSelect();
+
+    }
+
+    /**
+     * Cancelling edit a row. Setting up a selection as null
+     *
+     * @param event
+     */
+    public void onRowCancel(RowEditEvent event) {
+	user = null;
+	(new MessageUtils()).messageGenerator("Edit Cancelled ", ((User) event.getObject()).toString());
+    }
+
+    /**
+     * Fixing a new added user list if we've added the set of users
+     */
+    public void fixAllAdded() {
+
+	System.out.println(" userList size " + userList.size());
+	for (int k = 0; k < userList.size(); k++) {
+	    User tmp = userList.get(k);
+
+	    if (tmp.getId() != null) { // we are ignoring the empty data
+		System.out.println(k + " " + tmp + "; " + System.lineSeparator());
+
+		try { // persist a telescope
+		    persist(tmp);
+		    System.out.println(k + ": Done " + tmp);
+		} catch (Exception e) {
+
+		    System.out.println("   e: " + e);
+		}
+	    }
+	}
+	initial();
+    }
+
+    public void deleteUser(long id) {
+	User uu = em.find(User.class, id);
+	System.out.println("Deleting User: " + uu);
+	em.remove(uu);
+    }
+
+    public void deleteUser() {
+	System.out.println("  Removing all telescopes ");
+	for (int k = 0; k < userList.size(); k++) {
+	    User uu = userList.get(k);
+	    deleteUser(uu.getId());
+	}
+    }
+
+    /**
+     * Removes the record(s) from Telescope table. if the "all " parameter is
+     * true, removes all records else it is false removes only selected record
+     *
+     * @param all
+     */
+    private void deleteUser(boolean all) {
+	if (all) {
+	    System.out.println("Remove ALL");
+	    deleteUser();
+//           telescopeList.clear();
+	    user = null;
+
+	    (new MessageUtils()).messageGenerator("Remove All existing users! ", "");
+	    return;
+	}
+	//System.out.println("tt " + user);
+	if (user != null) {
+	    System.out.println("  Remove user..." + user);
+	    if (user.getId() != null) {
+		deleteUser(user.getId());
+		userList.remove(user);
+		(new MessageUtils()).messageGenerator("Remove telescope ", user.toString());
+	    } else {
+		userList.clear();
+		initial();
+	    }
+	}
+
+	System.out.println(" TelescopeList Size:  " + userList.size());
+    }
+
 }

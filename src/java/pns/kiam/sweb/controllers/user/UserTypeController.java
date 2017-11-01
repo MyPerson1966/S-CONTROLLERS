@@ -30,6 +30,7 @@ public class UserTypeController extends AbstractController implements Serializab
     private UserType userType;
     private List<UserType> userTypeList = new ArrayList<>();
     private CriteriaQuery<UserType> cq;
+    private String[] namesRights = new String[0];
 
     @PostConstruct
     public void init() {
@@ -37,6 +38,7 @@ public class UserTypeController extends AbstractController implements Serializab
 	    cb = em.getCriteriaBuilder();
 	    cq = cb.createQuery(UserType.class);
 	    userTypeList = loadAllTypes();
+	    generateTypesName();
 	} catch (NullPointerException e) {
 	}
 
@@ -52,6 +54,14 @@ public class UserTypeController extends AbstractController implements Serializab
 
 	(new MessageUtils()).messageGenerator(" User Type Number is: " + Q.getResultList().size(), "");
 	return Q.getResultList();
+    }
+
+    public String[] getNamesRights() {
+	return namesRights;
+    }
+
+    public void setNamesRights(String[] namesRights) {
+	this.namesRights = namesRights;
     }
 
     public UserType getUserType() {
@@ -136,6 +146,24 @@ public class UserTypeController extends AbstractController implements Serializab
 	userType = null;
     }
 
+    /**
+     * Find a UserType entity by its id
+     *
+     * @param id
+     * @return
+     */
+    public UserType seachForType(long id) {
+	for (int k = 0; k < userTypeList.size(); k++) {
+	    UserType tmp = userTypeList.get(k);
+	    if (tmp.getId() != null) {
+		if (tmp.getId() == id) {
+		    return tmp;
+		}
+	    }
+	}
+	return null;
+    }
+
     public void removeRow(boolean all) {
 	System.out.println("    REMOVE ALL " + all);
 	if (all) {
@@ -157,6 +185,13 @@ public class UserTypeController extends AbstractController implements Serializab
 	for (int k = 0; k < userTypeList.size(); k++) {
 	    UserType tmp = userTypeList.get(k);
 	    deleteUserType(tmp.getId());
+	}
+    }
+
+    private void generateTypesName() {
+	namesRights = new String[userTypeList.size()];
+	for (int p = 0; p < userTypeList.size(); p++) {
+	    namesRights[p] = userTypeList.get(p).getName();
 	}
     }
 }

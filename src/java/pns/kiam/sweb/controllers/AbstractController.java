@@ -8,7 +8,6 @@ package pns.kiam.sweb.controllers;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 /**
  *
@@ -21,12 +20,9 @@ public class AbstractController {
 
     protected CriteriaBuilder cb;
 
-    protected CriteriaQuery<Object> cq;
-
     protected void abstractInit() {
 	cb = em.getCriteriaBuilder();
 //	cq = cb.createQuery(c);
-//	System.out.println("   CQ " + cq.toString());
     }
 
     /**

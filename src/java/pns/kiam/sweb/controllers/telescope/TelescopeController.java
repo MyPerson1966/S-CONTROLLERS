@@ -43,7 +43,6 @@ public class TelescopeController extends AbstractController implements Serializa
     public void initial() {
 	try {
 	    abstractInit();
-//            cb = em.getCriteriaBuilder();
 	    cq = cb.createQuery(Telescope.class);
 	    telescopeList = loadAllTelescopes();
 	    freshUploadComplete = false;
@@ -60,7 +59,6 @@ public class TelescopeController extends AbstractController implements Serializa
 	cq.orderBy(cb.asc(res.get("id")));
 	TypedQuery<Telescope> Q = em.createQuery(cq);
 	rowDeSelect();
-	System.out.println("    QQQQQ " + cq);
 //	(new MessageUtils()).messageGenerator("Total Number of Telescopes  is: " + Q.getResultList().size(), "");
 	return Q.getResultList();
     }
@@ -155,8 +153,8 @@ public class TelescopeController extends AbstractController implements Serializa
 	telescopeList.add(telescope);
 
 	(new MessageUtils()).messageGenerator("Prepare to Create a new Telescope ", "");
-	rowDeSelect();
 	System.out.println(" Prepare to create a new  telescope " + telescope);
+	rowDeSelect();
     }
 
     /**
