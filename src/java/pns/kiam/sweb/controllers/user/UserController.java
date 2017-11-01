@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
+import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.users.User;
 import pns.kiam.entities.users.UserType;
 import pns.kiam.sweb.controllers.AbstractController;
@@ -33,6 +34,7 @@ public class UserController extends AbstractController implements Serializable {
 
     private User user;
     private List<User> userList = new ArrayList<>();
+    private List<Telescope> telescopeUserList = new ArrayList<>();
     private CriteriaQuery<User> cq;
 
     private String selectedInfo = "";
@@ -84,6 +86,14 @@ public class UserController extends AbstractController implements Serializable {
 	this.userList = userList;
     }
 
+    public List<Telescope> getTelescopeUserList() {
+	return telescopeUserList;
+    }
+
+    public void setTelescopeUserList(List<Telescope> telescopeUserList) {
+	this.telescopeUserList = telescopeUserList;
+    }
+
     /**
      * Row Select action
      */
@@ -96,6 +106,20 @@ public class UserController extends AbstractController implements Serializable {
 //	    telescopeMaskController.setSelectedInfo("");
 //	} catch (NullPointerException e) {
 //	}
+    }
+
+    public void addTelescopeToList(Telescope t) {
+	System.out.println("       " + t);
+//	if (!telescopeUserList.contains(t)) {
+	telescopeUserList.add(t);
+//	}
+    }
+
+    public void removeTelescopeFromList(Telescope t) {
+	if (telescopeUserList.contains(t)) {
+	    telescopeUserList.remove(t);
+	}
+
     }
 
     /**
