@@ -17,7 +17,6 @@ public class AbstractController {
 
     @PersistenceContext //(unitName = "S-WEBPU", type = PersistenceContextType.EXTENDED)
     protected EntityManager em;
-
     protected CriteriaBuilder cb;
 
     protected void abstractInit() {
