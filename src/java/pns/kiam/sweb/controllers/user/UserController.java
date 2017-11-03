@@ -196,8 +196,9 @@ public class UserController extends AbstractController implements Serializable {
             merge(user);
 //	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
         }
+        rowDeSelect();
+        userList.clear();
         userList = loadAllUsers();
-//	rowDeSelect();
 
     }
 
