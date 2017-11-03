@@ -17,8 +17,8 @@ import org.primefaces.event.SelectEvent;
 import pns.kiam.Utils.NumberUtils;
 import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.telescopes.TelescopeHorizontMask;
-import pns.kiam.sweb.controllers.AbstractController;
 import pns.kiam.sweb.utils.MessageUtils;
+import pns.kiam.sweb.controllers.AbstractController;
 
 /**
  *
