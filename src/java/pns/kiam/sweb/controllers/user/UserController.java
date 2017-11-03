@@ -177,19 +177,17 @@ public class UserController extends AbstractController implements Serializable {
 
         user = (User) event.getObject();
 
-        System.out.println("   New User  " + user + "  saved  " + System.lineSeparator()
-                + "  user.getUserType().getName() " + user.getUserType().getName() + ""
-                + "  user.getUserType().getBinRights() " + user.getUserType().getBinRights() + ""
-                + " user.getUserType().getId() " + user.getUserType().getId() + ""
-                + "     user.getUserTelescopeList().size()  " + user.getUserTelescopeList().size()
-        );
-
+//        System.out.println("   New User  " + user + "  saved  " + System.lineSeparator()
+//                + "  user.getUserType().getName() " + user.getUserType().getName() + ""
+//                + "  user.getUserType().getBinRights() " + user.getUserType().getBinRights() + ""
+//                + " user.getUserType().getId() " + user.getUserType().getId() + ""
+//                + "     user.getUserTelescopeList().size()  " + user.getUserTelescopeList().size()
+//        );
         if (user.getId() == null) {
             UserType ut = userTypeController.seachForType(user.getUserType().getId());
             System.out.println("     ut: " + ut);
             user.setUserType(ut);
             persistOrMergeUsersTelescopes();
-            //persist(user.getUserType());
             persist(user);
             (new MessageUtils()).messageGenerator("New User Created", ((User) event.getObject()).toString());
         } else {
@@ -198,7 +196,7 @@ public class UserController extends AbstractController implements Serializable {
             merge(user);
 //	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
         }
-//	userList = loadAllUsers();
+        userList = loadAllUsers();
 //	rowDeSelect();
 
     }
