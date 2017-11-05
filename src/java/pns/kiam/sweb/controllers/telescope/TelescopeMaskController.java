@@ -17,8 +17,8 @@ import org.primefaces.event.SelectEvent;
 import pns.kiam.Utils.NumberUtils;
 import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.telescopes.TelescopeHorizontMask;
-import pns.kiam.sweb.utils.MessageUtils;
 import pns.kiam.sweb.controllers.AbstractController;
+import pns.kiam.sweb.utils.MessageUtils;
 
 /**
  *
@@ -176,16 +176,19 @@ public class TelescopeMaskController extends AbstractController implements Seria
      *
      * @param all
      */
-    public void removeRow(boolean all) {
+    public void removeRow(boolean all) throws NullPointerException {
+
+	//if (telescope.getTelescopeMask() != null) {
 	if (all) {
 	    if (telescope != null) {
 		for (int k = 0; k < telescope.getTelescopeMask().size(); k++) {
 		    deleteMask(telescope.getTelescopeMask().get(k).getId());
 		    //System.out.println(k + " REMOVE TEST: removing of  " + " " + telescope.getTelescopeMask().get(k).getId());;
 		}
+
+		telescope.getTelescopeMask().clear();
+		(new MessageUtils()).messageGenerator("Telescope " + telescope.getIdentifier(), "All masks removes");
 	    }
-	    telescope.getTelescopeMask().clear();
-	    (new MessageUtils()).messageGenerator("Telescope " + telescope.getIdentifier(), "All masks removes");
 	}
 	if (!all && horizontMask != null) {
 	    System.out.println("MASK TO DELETE   " + horizontMask + ";    " + horizontMask.getId() + ";   " + horizontMask.getClass().getCanonicalName());
@@ -193,6 +196,7 @@ public class TelescopeMaskController extends AbstractController implements Seria
 	    telescope.getTelescopeMask().remove(horizontMask);
 	    (new MessageUtils()).messageGenerator("Telescope " + telescope.getIdentifier(), "The mask " + horizontMask.toString() + " removes");
 	}
+	//}
 	setTelescope(telescope);
 //	fullRefreshTelescopeMask();
 //	reduceHorizonts();
