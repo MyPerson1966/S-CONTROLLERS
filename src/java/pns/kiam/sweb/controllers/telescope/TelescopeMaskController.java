@@ -176,7 +176,7 @@ public class TelescopeMaskController extends AbstractController implements Seria
      *
      * @param all
      */
-    public void removeRow(boolean all) throws NullPointerException {
+    public void removeRow(boolean all) {
 
 	//if (telescope.getTelescopeMask() != null) {
 	if (all) {
@@ -206,7 +206,7 @@ public class TelescopeMaskController extends AbstractController implements Seria
 
     private void deleteMask(long id) {
 	TelescopeHorizontMask tshm = em.find(TelescopeHorizontMask.class, id);
-	System.out.println("ID " + id + "    tshm " + tshm);
+//	System.out.println("ID " + id + "    tshm " + tshm);
 
 	if (tshm != null) {
 	    em.remove(tshm);
