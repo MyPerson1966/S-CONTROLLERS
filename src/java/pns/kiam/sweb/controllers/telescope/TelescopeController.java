@@ -119,10 +119,15 @@ public class TelescopeController extends AbstractController implements Serializa
     public void rowSelectAction(Telescope t) {
 	telescope = t;
 
+	System.out.println("     ====>>> 2  rowSelectAction()      " + getClass().getCanonicalName() + "  :::  " + t + "" + System.lineSeparator() + System.lineSeparator());
+	System.out.println("      ---->>  ");
+
 	telescopeMaskController.setTelescope(telescope);
+	System.out.println("  -------------->>>>>  telescope.getTelescopeMask().size()    " + telescope.getTelescopeMask().size());
 	selectedInfo = " ( Selected " + telescope.getIdentifier() + " telescope) ";
 	(new MessageUtils()).messageGenerator("Telescope Selected", telescope.toString());
-//	System.out.println("  Selected " + t);
+	System.out.println(" 2  rowSelectAction()      " + getClass().getCanonicalName() + "   " + t + "");
+
     }
 
     /**

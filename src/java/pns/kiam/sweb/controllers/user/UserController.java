@@ -173,8 +173,9 @@ public class UserController extends AbstractController implements Serializable {
      *
      * @param event
      */
-    public void onRowEdit(RowEditEvent event) {
-
+    public String onRowEdit(RowEditEvent event) {
+///users/userdata.xhtml
+// update=":UserTableForm:UserTable "
 	user = (User) event.getObject();
 
 //        System.out.println("   New User  " + user + "  saved  " + System.lineSeparator()
@@ -199,7 +200,7 @@ public class UserController extends AbstractController implements Serializable {
 	rowDeSelect();
 	userList.clear();
 	userList = loadAllUsers();
-
+	return "/users/userdata.xhtml?faces-redirect=true";
     }
 
     /**

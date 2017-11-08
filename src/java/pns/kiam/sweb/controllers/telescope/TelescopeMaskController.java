@@ -100,7 +100,7 @@ public class TelescopeMaskController extends AbstractController implements Seria
 
     public void setTelescope(Telescope telescope) {
 	this.telescope = telescope;
-	fullRefreshTelescopeMask();
+//	fullRefreshTelescopeMask();
 
     }
 
@@ -177,6 +177,7 @@ public class TelescopeMaskController extends AbstractController implements Seria
      * @param all
      */
     public void removeRow(boolean all) {
+	System.out.println("+++++++++++++>>>>    removeRow  " + getClass().getCanonicalName() + "   " + (telescope == null));
 
 	//if (telescope.getTelescopeMask() != null) {
 	if (all) {
