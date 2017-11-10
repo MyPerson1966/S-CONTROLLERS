@@ -43,63 +43,84 @@ public class UserController extends AbstractController implements Serializable {
 
     @PostConstruct
     public void initial() {
-	try {
-	    abstractInit();
-	    cq = cb.createQuery(User.class);
-	    cq = cb.createQuery(User.class);
-	    userList = loadAllUsers();
-//	    freshUploadComplete = false;
-//	    numbersOfTelescopes = telescopeList.size();
-	} catch (NullPointerException e) {
-	}
+        try {
+            abstractInit();
+            cq = cb.createQuery(User.class);
+            cq = cb.createQuery(User.class);
+            userList = loadAllUsers();
+            usedTelescopesListGenerator();
+        } catch (NullPointerException e) {
+        }
     }
 
     private List loadAllUsers() {
 
-	Root<User> res = cq.from(User.class);
-	cq.select(res);
+        Root<User> res = cq.from(User.class);
+        cq.select(res);
 
-	cq.orderBy(cb.asc(res.get("id")));
-	TypedQuery<User> Q = em.createQuery(cq);
-	rowDeSelect();
+        cq.orderBy(cb.asc(res.get("id")));
+        TypedQuery<User> Q = em.createQuery(cq);
+        rowDeSelect();
 //	(new MessageUtils()).messageGenerator("Total Number of Telescopes  is: " + Q.getResultList().size(), "");
-	return Q.getResultList();
+        return Q.getResultList();
+    }
+
+    /**
+     * Gets the user list and With every user in it collect to the telescopeList
+     * all of user's telescope
+     *
+     */
+    private void usedTelescopesListGenerator() {
+        for (int k = 0; k < userList.size(); k++) {
+            User tmpU = userList.get(k);
+            for (int kt = 0; kt < tmpU.getUserTelescopeList().size(); kt++) {
+                Telescope tmpT = tmpU.getUserTelescopeList().get(kt);
+                if (!telescopeUserList.contains(tmpT)) {
+                    telescopeUserList.add(tmpT);
+                }
+            }
+        }
+    }
+
+    public void telescopeUserListRefresh() {
+        telescopeUserList.clear();
+        usedTelescopesListGenerator();
     }
 
     public String getSelectedInfo() {
-	return selectedInfo;
+        return selectedInfo;
     }
 
     public User getUser() {
-	return user;
+        return user;
     }
 
     public void setUser(User user) {
-	this.user = user;
+        this.user = user;
     }
 
     public List<User> getUserList() {
-	return userList;
+        return userList;
     }
 
     public void setUserList(List<User> userList) {
-	this.userList = userList;
+        this.userList = userList;
     }
 
     public List<Telescope> getTelescopeUserList() {
-	return telescopeUserList;
+        return telescopeUserList;
     }
 
     public void setTelescopeUserList(List<Telescope> telescopeUserList) {
-	this.telescopeUserList = telescopeUserList;
+        this.telescopeUserList = telescopeUserList;
     }
 
     /**
      * Row Select action
      */
     public void rowSelect(SelectEvent event) {
-	user = (User) event.getObject();
-	System.out.println("   " + user);
+        user = (User) event.getObject();
+        System.out.println("   " + user);
 //	try {
 //	    System.out.println(" RowSelect ---  TELESCOPE ID " + telescope.getId());
 //	    telescopeMaskController.setTelescope(telescope);
@@ -109,16 +130,16 @@ public class UserController extends AbstractController implements Serializable {
     }
 
     public void addTelescopeToList(Telescope t) {
-	System.out.println("       " + t);
+        System.out.println("       " + t);
 //	if (!telescopeUserList.contains(t)) {
-	telescopeUserList.add(t);
+        telescopeUserList.add(t);
 //	}
     }
 
     public void removeTelescopeFromList(Telescope t) {
-	if (telescopeUserList.contains(t)) {
-	    telescopeUserList.remove(t);
-	}
+        if (telescopeUserList.contains(t)) {
+            telescopeUserList.remove(t);
+        }
 
     }
 
@@ -131,7 +152,7 @@ public class UserController extends AbstractController implements Serializable {
      * @param t
      */
     public void rowSelectAction(User u) {
-	user = u;
+        user = u;
 
     }
 
@@ -139,8 +160,8 @@ public class UserController extends AbstractController implements Serializable {
      * Deselect the Selected Row
      */
     public void rowDeSelect() {
-	user = null;
-	selectedInfo = "";
+        user = null;
+        selectedInfo = "";
 
     }
 
@@ -152,18 +173,18 @@ public class UserController extends AbstractController implements Serializable {
      * @param all
      */
     public void removeRow(boolean all) {
-	System.out.println("  Deleting telescope ALL=" + all);
-	deleteUser(all);
-	userList = loadAllUsers();
-	rowDeSelect();
+        System.out.println("  Deleting telescope ALL=" + all);
+        deleteUser(all);
+        userList = loadAllUsers();
+        rowDeSelect();
     }
 
     public void prepareCreation() {
-	User u = new User();
-	userList.add(u);
+        User u = new User();
+        userList.add(u);
 
-	(new MessageUtils()).messageGenerator("Prepare to Create a new User", "");
-	System.out.println(" Prepare to create a new  user " + u);
+        (new MessageUtils()).messageGenerator("Prepare to Create a new User", "");
+        System.out.println(" Prepare to create a new  user " + u);
 //	rowDeSelect();
 
     }
@@ -174,33 +195,28 @@ public class UserController extends AbstractController implements Serializable {
      * @param event
      */
     public String onRowEdit(RowEditEvent event) {
-///users/userdata.xhtml
-// update=":UserTableForm:UserTable "
-	user = (User) event.getObject();
 
-//        System.out.println("   New User  " + user + "  saved  " + System.lineSeparator()
-//                + "  user.getUserType().getName() " + user.getUserType().getName() + ""
-//                + "  user.getUserType().getBinRights() " + user.getUserType().getBinRights() + ""
-//                + " user.getUserType().getId() " + user.getUserType().getId() + ""
-//                + "     user.getUserTelescopeList().size()  " + user.getUserTelescopeList().size()
-//        );
-	if (user.getId() == null) {
-	    UserType ut = userTypeController.seachForType(user.getUserType().getId());
-	    System.out.println("     ut: " + ut);
-	    user.setUserType(ut);
-	    persistOrMergeUsersTelescopes();
-	    persist(user);
-	    (new MessageUtils()).messageGenerator("New User Created", ((User) event.getObject()).toString());
-	} else {
+        user = (User) event.getObject();
 
-	    persistOrMergeUsersTelescopes();
-	    merge(user);
+        if (user.getId() == null) {
+            UserType ut = userTypeController.seachForType(user.getUserType().getId());
+            System.out.println("     ut: " + ut);
+            user.setUserType(ut);
+            persistOrMergeUsersTelescopes();
+            persist(user);
+            (new MessageUtils()).messageGenerator("New User Created", ((User) event.getObject()).toString());
+        } else {
+
+            persistOrMergeUsersTelescopes();
+            merge(user);
 //	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
-	}
-	rowDeSelect();
-	userList.clear();
-	userList = loadAllUsers();
-	return "/users/userdata.xhtml?faces-redirect=true";
+        }
+        rowDeSelect();
+        userList.clear();
+        userList = loadAllUsers();
+        telescopeUserListRefresh();
+
+        return "/users/userdata.xhtml?faces-redirect=true";
     }
 
     /**
@@ -209,8 +225,8 @@ public class UserController extends AbstractController implements Serializable {
      * @param event
      */
     public void onRowCancel(RowEditEvent event) {
-	user = null;
-	(new MessageUtils()).messageGenerator("Edit Cancelled ", ((User) event.getObject()).toString());
+        user = null;
+        (new MessageUtils()).messageGenerator("Edit Cancelled ", ((User) event.getObject()).toString());
     }
 
     /**
@@ -218,47 +234,47 @@ public class UserController extends AbstractController implements Serializable {
      */
     public void fixAllAdded() {
 
-	System.out.println(" userList size " + userList.size());
-	for (int k = 0; k < userList.size(); k++) {
-	    User tmp = userList.get(k);
+        System.out.println(" userList size " + userList.size());
+        for (int k = 0; k < userList.size(); k++) {
+            User tmp = userList.get(k);
 
-	    if (tmp.getId() != null) { // we are ignoring the empty data
-		System.out.println(k + " " + tmp + "; " + System.lineSeparator());
+            if (tmp.getId() != null) { // we are ignoring the empty data
+                System.out.println(k + " " + tmp + "; " + System.lineSeparator());
 
-		try { // persist a telescope
-		    persist(tmp);
-		    System.out.println(k + ": Done " + tmp);
-		} catch (Exception e) {
+                try { // persist a telescope
+                    persist(tmp);
+                    System.out.println(k + ": Done " + tmp);
+                } catch (Exception e) {
 
-		    System.out.println("   e: " + e);
-		}
-	    }
-	}
-	initial();
+                    System.out.println("   e: " + e);
+                }
+            }
+        }
+        initial();
     }
 
     public void deleteUser(long id) {
-	User uu = em.find(User.class, id);
-	System.out.println("Deleting User: " + uu);
-	em.remove(uu);
+        User uu = em.find(User.class, id);
+        System.out.println("Deleting User: " + uu);
+        em.remove(uu);
     }
 
     public void deleteUser() {
-	System.out.println("  Removing all telescopes ");
-	for (int k = 0; k < userList.size(); k++) {
-	    User uu = userList.get(k);
-	    deleteUser(uu.getId());
-	}
+        System.out.println("  Removing all telescopes ");
+        for (int k = 0; k < userList.size(); k++) {
+            User uu = userList.get(k);
+            deleteUser(uu.getId());
+        }
     }
 
     private void persistOrMergeUsersTelescopes() {
-	if (user != null) {
-	    for (int k = 0; k < user.getUserTelescopeList().size(); k++) {
-		Telescope tmp = user.getUserTelescopeList().get(k);
-		System.out.println(k + "   " + user.getUserTelescopeList().get(k).getClass().getName() + "       " + user.getUserTelescopeList().get(k));
-		merge(tmp);
-	    }
-	}
+        if (user != null) {
+            for (int k = 0; k < user.getUserTelescopeList().size(); k++) {
+                Telescope tmp = user.getUserTelescopeList().get(k);
+                System.out.println(k + "   " + user.getUserTelescopeList().get(k).getClass().getName() + "       " + user.getUserTelescopeList().get(k));
+                merge(tmp);
+            }
+        }
     }
 
     /**
@@ -268,29 +284,29 @@ public class UserController extends AbstractController implements Serializable {
      * @param all
      */
     private void deleteUser(boolean all) {
-	if (all) {
-	    System.out.println("Remove ALL");
-	    deleteUser();
+        if (all) {
+            System.out.println("Remove ALL");
+            deleteUser();
 //           telescopeList.clear();
-	    user = null;
+            user = null;
 
-	    (new MessageUtils()).messageGenerator("Remove All existing users! ", "");
-	    return;
-	}
-	//System.out.println("tt " + user);
-	if (user != null) {
-	    System.out.println("  Remove user..." + user);
-	    if (user.getId() != null) {
-		deleteUser(user.getId());
-		userList.remove(user);
-		(new MessageUtils()).messageGenerator("Remove telescope ", user.toString());
-	    } else {
-		userList.clear();
-		initial();
-	    }
-	}
+            (new MessageUtils()).messageGenerator("Remove All existing users! ", "");
+            return;
+        }
+        //System.out.println("tt " + user);
+        if (user != null) {
+            System.out.println("  Remove user..." + user);
+            if (user.getId() != null) {
+                deleteUser(user.getId());
+                userList.remove(user);
+                (new MessageUtils()).messageGenerator("Remove telescope ", user.toString());
+            } else {
+                userList.clear();
+                initial();
+            }
+        }
 
-	System.out.println(" TelescopeList Size:  " + userList.size());
+        System.out.println(" TelescopeList Size:  " + userList.size());
     }
 
 }
