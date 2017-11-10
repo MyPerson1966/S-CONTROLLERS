@@ -206,15 +206,20 @@ public class UserController extends AbstractController implements Serializable {
             persist(user);
             (new MessageUtils()).messageGenerator("New User Created", ((User) event.getObject()).toString());
         } else {
-
             persistOrMergeUsersTelescopes();
             merge(user);
 //	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
         }
+
+        System.out.println("   userID " + user.getId() + "    user.getUserTelescopeList().size()   " + user.getUserTelescopeList().size());
+
         rowDeSelect();
         userList.clear();
         userList = loadAllUsers();
         telescopeUserListRefresh();
+        for (int k = 0; k < userList.size(); k++) {
+            System.out.println("uid: " + userList.get(k).getId() + " userTelescopesListSize " + userList.get(k).getUserTelescopeList().size());
+        }
 
         return "/users/userdata.xhtml?faces-redirect=true";
     }
@@ -224,9 +229,11 @@ public class UserController extends AbstractController implements Serializable {
      *
      * @param event
      */
-    public void onRowCancel(RowEditEvent event) {
+    public String onRowCancel(RowEditEvent event) {
         user = null;
         (new MessageUtils()).messageGenerator("Edit Cancelled ", ((User) event.getObject()).toString());
+
+        return "/users/userdata.xhtml?faces-redirect=true";
     }
 
     /**
