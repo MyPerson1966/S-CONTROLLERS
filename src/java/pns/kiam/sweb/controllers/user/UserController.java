@@ -198,6 +198,7 @@ public class UserController extends AbstractController implements Serializable {
     public void onRowEdit(RowEditEvent event) {
 
 	user = (User) event.getObject();
+	System.out.println("  ------------>>user-->->->> " + user);
 
 	if (user.getId() == null) {
 	    UserType ut = userTypeController.seachForType(user.getUserType().getId());
@@ -212,14 +213,18 @@ public class UserController extends AbstractController implements Serializable {
 //	    (new MessageUtils()).messageGenerator("Telescope Edited Result is:", ((Telescope) event.getObject()).toString());
 	}
 
-	System.out.println("   userID " + user.getId() + "    user.getUserTelescopeList().size()   " + user.getUserTelescopeList().size());
+	System.out.println("  ------------>> " + user + "    user.getUserTelescopeList().size()   " + user.getUserTelescopeList().size());
 
 	rowDeSelect();
 	userList.clear();
 	userList = loadAllUsers();
-	telescopeUserListRefresh();
+	usedTelescopesListGenerator();
+
 	for (int k = 0; k < userList.size(); k++) {
-	    System.out.println("uid: " + userList.get(k).getId() + " userTelescopesListSize " + userList.get(k).getUserTelescopeList().size());
+	    for (int kT = 0; kT < userList.get(k).getUserTelescopeList().size(); kT++) {
+		Telescope tmpT = userList.get(k).getUserTelescopeList().get(kT);
+		System.out.println("     -->uid: " + userList.get(k).getId() + " userTelescope " + kT + " " + tmpT);
+	    }
 	}
 
 	//return "/users/userdata.xhtml?faces-redirect=true";
