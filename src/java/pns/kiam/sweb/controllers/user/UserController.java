@@ -261,6 +261,12 @@ public class UserController extends AbstractController implements Serializable {
 	initial();
     }
 
+    /**
+     * Test whenever a given Telescope instance is used by some user
+     *
+     * @param t
+     * @return
+     */
     public boolean telescopeInUse(Telescope t) {
 
 	for (int kU = 0; kU < userList.size(); kU++) {
@@ -271,6 +277,21 @@ public class UserController extends AbstractController implements Serializable {
 //	    for( int kT=0; kT<tmpU.getUserTelescopeList().size(); kU++){
 //
 //	    }
+	}
+	return false;
+    }
+
+    /**
+     * Test whenever a given Telescope instance is used by the given user
+     * instance
+     *
+     * @param t
+     * @return
+     */
+    public boolean telescopeInUse(Telescope t, User u) {
+	//boolean inGeneralUse = telescopeInUse(t);
+	if (u.getUserTelescopeList().contains(t)) {
+	    return true;
 	}
 	return false;
     }
