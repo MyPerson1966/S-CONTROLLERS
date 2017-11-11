@@ -230,6 +230,10 @@ public class UserController extends AbstractController implements Serializable {
 	//return "/users/userdata.xhtml?faces-redirect=true";
     }
 
+    public void updateUserTelescopes() {
+	usedTelescopesListGenerator();
+    }
+
     /**
      * Cancelling edit a row. Setting up a selection as null
      *
