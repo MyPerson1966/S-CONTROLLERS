@@ -12,8 +12,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import org.primefaces.model.UploadedFile;
 import pns.kiam.entities.telescopes.Telescope;
 import pns.kiam.entities.telescopes.TelescopeHorizontMask;
@@ -26,7 +26,7 @@ import pns.kiam.sweb.controllers.AbstractController;
 @Stateless
 public class TelescopeListUploaderController extends AbstractController {
 
-    @EJB
+    @Inject
     private TelescopeController telescopeController;
 
     private String fileContent;

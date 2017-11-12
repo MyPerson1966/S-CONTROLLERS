@@ -11,7 +11,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Named;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import pns.kiam.Utils.NumberUtils;
@@ -24,16 +23,14 @@ import pns.kiam.sweb.utils.MessageUtils;
  *
  * @author PSEVO tochka
  */
-@Named
 @Stateless
-
 public class TelescopeMaskController extends AbstractController implements Serializable {
 
     /**
      * angle >=0 && <=90  step=1
      * horizont >=0 && <=360 step = 15
      */
-//    @EJB
+//    @Inject
     private TelescopeController telescopeController;
 
     private TelescopeHorizontMask horizontMask;

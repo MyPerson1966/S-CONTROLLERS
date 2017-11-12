@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,7 +23,6 @@ import pns.kiam.sweb.utils.MessageUtils;
  * @author PSEVO tochka
  */
 @Stateless
-@Named
 public class UserTypeController extends AbstractController implements Serializable {
 
     private UserType userType;
