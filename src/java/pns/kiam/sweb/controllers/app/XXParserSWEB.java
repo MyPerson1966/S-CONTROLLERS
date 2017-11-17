@@ -15,6 +15,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import pns.kiam.sweb.controllers.satelites.FileMeasuredController;
 import pns.xmlUtils.SXParser;
 
 /**
@@ -26,11 +27,16 @@ import pns.xmlUtils.SXParser;
 public class XXParserSWEB extends SXParser {
 
     @EJB
+    private FileMeasuredController fileMeasuredController;
+
+    @EJB
     private SsessionControl ssessionControl;
 
     private Attributes atts;
     private String login;
     private String thisElement = "";
+    private String password;
+    private String archivePath = "";
 
     /**
      * Get the value of login
@@ -38,7 +44,7 @@ public class XXParserSWEB extends SXParser {
      * @return the value of login
      */
     public String getLogin() {
-	return login;
+        return login;
     }
 
     /**
@@ -47,10 +53,24 @@ public class XXParserSWEB extends SXParser {
      * @param login new value of login
      */
     public void setLogin(String login) {
-	this.login = login;
+        this.login = login;
     }
 
-    private String password;
+    public String getArchivePath() {
+        return archivePath;
+    }
+
+    public void setArchivePath(String archivePath) {
+        this.archivePath = archivePath;
+    }
+
+    public FileMeasuredController getFileMeasuredController() {
+        return fileMeasuredController;
+    }
+
+    public void setFileMeasuredController(FileMeasuredController fileMeasuredController) {
+        this.fileMeasuredController = fileMeasuredController;
+    }
 
     /**
      * Get the value of password
@@ -58,7 +78,7 @@ public class XXParserSWEB extends SXParser {
      * @return the value of password
      */
     public String getPassword() {
-	return password;
+        return password;
     }
 
     /**
@@ -67,57 +87,61 @@ public class XXParserSWEB extends SXParser {
      * @param password new value of password
      */
     public void setPassword(String password) {
-	this.password = password;
+        this.password = password;
     }
 
     public SsessionControl getSsessionControl() {
-	return ssessionControl;
+        return ssessionControl;
     }
 
     public void build() throws ParserConfigurationException, SAXException, IOException {
-	SAXParserFactory factory = SAXParserFactory.newInstance();
-	SAXParser parser = factory.newSAXParser();
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
 
-	parser.parse(new File(docUrl), this);
+        parser.parse(new File(docUrl), this);
 
     }
 
     @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-	thisElement = qName;
-	this.atts = atts;
+        thisElement = qName;
+        this.atts = atts;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-	// The value of the element
-	String elementValue = new String(ch, start, length);
+        // The value of the element
+        String elementValue = new String(ch, start, length);
 //	System.out.println("thisElement :  " + thisElement + ";  Value:    " + elementValue + "  start " + start + "   length " + length + " "
 //		+ "           thisElement.length()  " + thisElement.length() + " // " + thisElement.trim().length() + "  "
 //		+ "   atts.getValue(0) " + atts.getValue(0));
-
-	if (thisElement.trim().equals("login")) {
-	    login = elementValue;
-	}
-	if (thisElement.trim().equals("password")) {
-	    password = elementValue;
-	}
+// archivePath
+        if (thisElement.trim().equals("login")) {
+            login = elementValue;
+        }
+        if (thisElement.trim().equals("password")) {
+            password = elementValue;
+        }
+        if (thisElement.trim().equals("archivePath")) {
+            archivePath = elementValue;
+            fileMeasuredController.setArchPath(archivePath);
+        }
     }
 
     @Override
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-	thisElement = "";
+        thisElement = "";
     }
 
     @Override
     public void endDocument() {
-	System.out.println("Stop parse XML...");
+        System.out.println("Stop parse XML...");
     }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
     @Override
     public void startDocument() throws SAXException {
-	System.out.println("Start parse XML...");
+        System.out.println("Start parse XML...");
     }
 }
