@@ -6,17 +6,11 @@
 package pns.kiam.sweb.controllers.satelites;
 
 import java.io.Serializable;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import pns.fileUtils.DirectoryDeepGo;
 import pns.fileUtils.FileSpecActor;
-import pns.kiam.entities.satellites.FileMeasured;
 import pns.kiam.sweb.controllers.AbstractController;
-import pns.kiam.sweb.controllers.app.XXParserSWEB;
 
 /**
  *
@@ -31,21 +25,21 @@ public class FileMeasuredController extends AbstractController implements Serial
     private FileSpecActor fsa = new FileSpecActor();
 
     public String getArchPath() {
-        return archPath;
+	return archPath;
     }
 
     public void setArchPath(String archPath) {
-        this.archPath = archPath;
+	this.archPath = archPath;
     }
 
     public void readArchiveFileDir() {
 
-        ddg.setRootDir(archPath);
-        ddg.setDirToInvestigate("/");
+	ddg.setRootDir(archPath);
+	ddg.setDirToInvestigate("/");
 
-        ddg.goDeep();
-        System.out.println("  ddg.getDirToInvestigate()   " + ddg.getDirToInvestigate() + "  ddg.getSubDirList().size()  " + ddg.getSubDirList().size());
-        for (int k = 0; k < ddg.getFileList().size(); k++) {
+	ddg.goDeep();
+	System.out.println("  ddg.getDirToInvestigate()   " + ddg.getDirToInvestigate() + "  ddg.getSubDirList().size()  " + ddg.getSubDirList().size());
+	for (int k = 0; k < ddg.getFileList().size(); k++) {
 //            String tmp = ddg.getFileList().get(k).getAbsolutePath();
 //            tmp = tmp.replace('\\', '/');
 //            String[] pathPropers = tmp.split(archPath);
@@ -70,11 +64,11 @@ public class FileMeasuredController extends AbstractController implements Serial
 //            }
 //            //
 //            //System.out.println("     =====>>>==>> " + tmp + "   :    ");
-        }
+	}
 
     }
 
     private int gettingIntFromSTR(String s) throws NumberFormatException {
-        return Integer.parseInt(s);
+	return Integer.parseInt(s);
     }
 }
