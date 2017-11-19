@@ -15,7 +15,7 @@ import pns.kiam.sweb.controllers.AbstractController;
 
 /**
  *
- * @author User
+ * @author PSEVDO tochka
  */
 @Singleton
 @Startup
