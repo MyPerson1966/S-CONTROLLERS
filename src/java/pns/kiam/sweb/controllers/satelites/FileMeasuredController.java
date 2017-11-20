@@ -5,7 +5,9 @@
  */
 package pns.kiam.sweb.controllers.satelites;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import pns.fileUtils.DirectoryDeepGo;
@@ -26,51 +28,54 @@ public class FileMeasuredController extends AbstractController implements Serial
     private FileSpecActor fsa = new FileSpecActor();
 
     public String getArchPath() {
-	return archPath;
+        return archPath;
     }
 
     public void setArchPath(String archPath) {
-	this.archPath = archPath;
+        this.archPath = archPath;
     }
 
     public void readArchiveFileDir() {
 
-	ddg.setRootDir(archPath);
-	ddg.setDirToInvestigate("/");
+        ddg.setRootDir(archPath);
+        ddg.setDirToInvestigate("/");
 
-	ddg.goDeep();
-	System.out.println("  ddg.getDirToInvestigate()   " + ddg.getDirToInvestigate() + "  ddg.getSubDirList().size()  " + ddg.getSubDirList().size());
-	for (int k = 0; k < ddg.getFileList().size(); k++) {
-	    String tmp = ddg.getFileList().get(k).getAbsolutePath();
-	    tmp = tmp.replace('\\', '/');
-	    String[] pathPropers = tmp.split(archPath);
-//    System.out.println(tmp + "      pathPropers.length   " + pathPropers.length);
-	    String[] pathParts = pathPropers[1].split("/");
-	    //System.out.println("           +pathParts.length " + pathParts.length);
-	    String YYYY = pathParts[1];
-	    String DDDD = pathParts[2];
+        ddg.goDeep();
+        System.out.println("  ddg.getDirToInvestigate()   " + ddg.getDirToInvestigate() + "  ddg.getSubDirList().size()  " + ddg.getSubDirList().size());
+        for (int k = 0; k < ddg.getFileList().size(); k++) {
+            File f = ddg.getFileList().get(k);
+            long mm = f.lastModified();
+            String tmp = ddg.getFileList().get(k).getAbsolutePath();
+            tmp = tmp.replace('\\', '/');
+            String[] pathPropers = tmp.split(archPath);
+            System.out.println(tmp + "      pathPropers.length   " + pathPropers.length);
+            String[] pathParts = pathPropers[1].split("/");
+            //System.out.println("           +pathParts.length " + pathParts.length);
+            String YYYY = pathParts[1];
+            String DDDD = pathParts[2];
+            String fileName = pathParts[pathParts.length - 1].split("\\.")[0];
+            System.out.println("YYYY:  " + YYYY + "     DDDD:  " + DDDD);
+            if (fsa.fileRead(tmp)) {
+                String c = fsa.getFileContent().trim();
+                int y = gettingIntFromSTR(YYYY);
+                int m = gettingIntFromSTR(DDDD.split("-")[0]);
+                int d = gettingIntFromSTR(DDDD.split("-")[1]);
+                System.out.println((new Date()) + " ;   file Modified     " + new Date(mm));
+                FileMeasured fm = new FileMeasured(y, m, d, c, fileName, mm);
 
-	    System.out.println("YYYY:  " + YYYY + "     DDDD:  " + DDDD);
-	    if (fsa.fileRead(tmp)) {
-		String c = fsa.getFileContent();
-		int y = gettingIntFromSTR(YYYY);
-		int d = gettingIntFromSTR(DDDD.split("-")[0]);
-		int m = gettingIntFromSTR(DDDD.split("-")[1]);
-		FileMeasured fm = new FileMeasured(y, m, d, c);
 //		System.out.println(k + " c==null " + c.length());
 //		System.out.println(k + " y " + fm.getYear());
 //		System.out.println(k + " m " + fm.getMonth());
 //		System.out.println(k + " d " + fm.getDate());
-		persist(fm);
-
-	    }
-	    //
-	    System.out.println(k + "     =====>>>==>> " + tmp + "   :    ");
-	}
+                persist(fm);
+            }
+            //
+            System.out.println(k + "     =====>>>==>> " + tmp + "   :    ");
+        }
 
     }
 
     private int gettingIntFromSTR(String s) throws NumberFormatException {
-	return Integer.parseInt(s);
+        return Integer.parseInt(s);
     }
 }
