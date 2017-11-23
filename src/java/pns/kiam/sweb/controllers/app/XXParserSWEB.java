@@ -23,7 +23,6 @@ import pns.xmlUtils.SXParser;
  * @author User
  */
 @Stateless
-@LocalBean
 public class XXParserSWEB extends SXParser {
 
     @EJB

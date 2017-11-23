@@ -8,12 +8,14 @@ package pns.kiam.sweb.controllers.satelites;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import pns.fileUtils.DirectoryDeepGo;
 import pns.fileUtils.FileSpecActor;
 import pns.kiam.entities.satellites.FileMeasured;
 import pns.kiam.sweb.controllers.AbstractController;
+import pns.kiam.sweb.controllers.app.XXParserSWEB;
 
 /**
  *
