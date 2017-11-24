@@ -15,7 +15,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import pns.kiam.sweb.controllers.satelites.FileMeasuredController;
 import pns.xmlUtils.SXParser;
 
 /**
@@ -24,9 +23,6 @@ import pns.xmlUtils.SXParser;
  */
 @Stateless
 public class XXParserSWEB extends SXParser {
-
-    @EJB
-    private FileMeasuredController fileMeasuredController;
 
     @EJB
     private SsessionControl ssessionControl;
@@ -61,14 +57,6 @@ public class XXParserSWEB extends SXParser {
 
     public void setArchivePath(String archivePath) {
         this.archivePath = archivePath;
-    }
-
-    public FileMeasuredController getFileMeasuredController() {
-        return fileMeasuredController;
-    }
-
-    public void setFileMeasuredController(FileMeasuredController fileMeasuredController) {
-        this.fileMeasuredController = fileMeasuredController;
     }
 
     /**
@@ -123,7 +111,6 @@ public class XXParserSWEB extends SXParser {
         }
         if (thisElement.trim().equals("archivePath")) {
             archivePath = elementValue;
-            fileMeasuredController.setArchPath(archivePath);
         }
     }
 
