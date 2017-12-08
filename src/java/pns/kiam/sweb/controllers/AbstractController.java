@@ -15,13 +15,18 @@ import javax.persistence.criteria.CriteriaBuilder;
  * @author PSEVO tochka
  */
 public class AbstractController {
+//S-TIMERSPU
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "S-WEBPU")
+    protected EntityManager emTM;
+    protected CriteriaBuilder cbTM;
+    @PersistenceContext(unitName = "S-WEBPU")
     protected EntityManager em;
     protected CriteriaBuilder cb;
 
     protected void abstractInit() {
         cb = em.getCriteriaBuilder();
+        cbTM = emTM.getCriteriaBuilder();
 //	cq = cb.createQuery(c);
     }
 

@@ -8,6 +8,7 @@
             <included-library dirs="100">reference.LIGHT-UTILS.dist</included-library>
             <included-library dirs="100">reference.SATELITES-jar.dist</included-library>
             <included-library dirs="200">file.reference.primefaces-5.0.jar</included-library>
+            <included-library dirs="100">reference.S-UTILS.dist</included-library>
             <source-roots>
                 <root id="src.dir" name="Пакеты исходных кодов"/>
             </source-roots>
@@ -18,6 +19,14 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>LIGHT-UTILS</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
+            </reference>
+            <reference>
+                <foreign-project>S-UTILS</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>dist</target>
