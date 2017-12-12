@@ -34,7 +34,8 @@ public class ResParser extends AbstractFileMeasureParser {
 
     @Override
     public List<SatelliteMeasurement> parseToSatellite(String content, String filename) {
-        file = filename;
+        file = filename;  // use for FileAddress of content..............
+
         List<SatelliteMeasurement> satMesList = new ArrayList<>();
         if (content.length() > 3) {
             Set<String> blocs = singleContent(content);

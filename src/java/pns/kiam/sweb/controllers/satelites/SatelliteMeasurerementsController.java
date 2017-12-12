@@ -27,7 +27,7 @@ import pns.kiam.sweb.controllers.AbstractController;
  *
  * @author User
  */
-//@Stateless
+@Stateless
 public class SatelliteMeasurerementsController extends AbstractController implements Serializable {
 
     protected CriteriaBuilder cb;

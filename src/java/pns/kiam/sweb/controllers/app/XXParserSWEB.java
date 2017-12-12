@@ -32,6 +32,7 @@ public class XXParserSWEB extends SXParser {
     private String thisElement = "";
     private String password;
     private String archivePath = "";
+    private int maxDaysFileLive = 10;
 
     /**
      * Get the value of login
@@ -57,6 +58,14 @@ public class XXParserSWEB extends SXParser {
 
     public void setArchivePath(String archivePath) {
         this.archivePath = archivePath;
+    }
+
+    public int getMaxDaysFileLive() {
+        return maxDaysFileLive;
+    }
+
+    public void setMaxDaysFileLive(int maxDaysFileLive) {
+        this.maxDaysFileLive = maxDaysFileLive;
     }
 
     /**
@@ -111,6 +120,13 @@ public class XXParserSWEB extends SXParser {
         }
         if (thisElement.trim().equals("archivePath")) {
             archivePath = elementValue;
+        }
+        //maxDaysFileLive
+        if (thisElement.trim().equals("maxDaysFileLive")) {
+            try {
+                maxDaysFileLive = Integer.parseInt(elementValue);
+            } catch (NumberFormatException e) {
+            }
         }
     }
 
