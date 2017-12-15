@@ -44,6 +44,7 @@ public class UserController extends AbstractController implements Serializable {
     @PostConstruct
     public void initial() {
         try {
+            System.out.println("22222222 22222 222 22");
             abstractInit();
             cq = cb.createQuery(User.class);
             cq = cb.createQuery(User.class);

@@ -23,6 +23,7 @@ public class AbstractController {
 
     protected void abstractInit() {
         cb = em.getCriteriaBuilder();
+
 //        cbTM = emTM.getCriteriaBuilder();
 //	cq = cb.createQuery(c);
     }
