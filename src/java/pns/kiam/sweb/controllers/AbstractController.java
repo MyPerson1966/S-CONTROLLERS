@@ -18,15 +18,12 @@ public class AbstractController {
 //S-TIMERSPU
 
     @PersistenceContext(unitName = "S-WEBPU")
-    protected EntityManager emTM;
-    protected CriteriaBuilder cbTM;
-    @PersistenceContext(unitName = "S-WEBPU")
     protected EntityManager em;
     protected CriteriaBuilder cb;
 
     protected void abstractInit() {
         cb = em.getCriteriaBuilder();
-        cbTM = emTM.getCriteriaBuilder();
+//        cbTM = emTM.getCriteriaBuilder();
 //	cq = cb.createQuery(c);
     }
 
