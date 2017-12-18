@@ -85,6 +85,26 @@ public class ArchiveFileController extends AbstractController implements Seriali
         return filterValue;
     }
 
+    public void setFileMeasured(FileMeasured fileMeasured) {
+        this.fileMeasured = fileMeasured;
+    }
+
+    public void setFileMeasuredList(List<FileMeasured> fileMeasuredList) {
+        this.fileMeasuredList = fileMeasuredList;
+    }
+
+    public void setCq(CriteriaQuery<FileMeasured> cq) {
+        this.cq = cq;
+    }
+
+    public void setTmpName(String tmpName) {
+        this.tmpName = tmpName;
+    }
+
+    public void setFilterValue(String filterValue) {
+        this.filterValue = filterValue;
+    }
+
     public void selectFile(FileMeasured fm) {
         this.fileMeasured = fm;
         genFileFromRec();
