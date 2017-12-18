@@ -32,6 +32,7 @@ public class XXParserSWEB extends SXParser {
     private String thisElement = "";
     private String password;
     private String archivePath = "";
+    private int maxDaysFileLive = 100;
 
     /**
      * Get the value of login
@@ -81,6 +82,14 @@ public class XXParserSWEB extends SXParser {
         return ssessionControl;
     }
 
+    public int getMaxDaysFileLive() {
+        return maxDaysFileLive;
+    }
+
+    public void setMaxDaysFileLive(int maxDaysFileLive) {
+        this.maxDaysFileLive = maxDaysFileLive;
+    }
+
     public void build() throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = factory.newSAXParser();
@@ -109,8 +118,8 @@ public class XXParserSWEB extends SXParser {
         if (thisElement.trim().equals("password")) {
             password = elementValue;
         }
-        if (thisElement.trim().equals("archivePath")) {
-            archivePath = elementValue;
+        if (thisElement.trim().equals("maxDaysFileLive")) {
+            maxDaysFileLive = Integer.parseInt(elementValue);
         }
     }
 
