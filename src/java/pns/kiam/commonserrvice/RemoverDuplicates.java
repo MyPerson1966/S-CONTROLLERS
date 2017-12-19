@@ -38,6 +38,7 @@ public class RemoverDuplicates {
     private ArchiveFileController fvc;
 
     public void removeDupleFiles() {
+//        long ts = System.currentTimeMillis();
         lastFL.clear();
         dupl = new ArrayList<>();
         long d = System.currentTimeMillis();
@@ -51,6 +52,9 @@ public class RemoverDuplicates {
 
         // search dubbed content in filesand then remove that dubles
         dupl = getDuple(lastFL);
+        long te = System.currentTimeMillis();
+//        long delta = te - ts;
+//        System.out.println("   ***************  TIME " + "  " + delta + "ms");
     }
 
     /**
@@ -63,6 +67,14 @@ public class RemoverDuplicates {
         this.fileAgeInDays = fileAgeInDays;
     }
 
+    public String getRootDir() {
+        return rootDir;
+    }
+
+    public void setRootDir(String rootDir) {
+        this.rootDir = rootDir;
+    }
+
     /**
      * every 15 days we are investigate here the existence of possible
      * doublicate files and remove them. The time deep is 33 days
@@ -73,7 +85,7 @@ public class RemoverDuplicates {
         // which are candidates to removing
         prepareRemoveFiles(33);
         // search dubbed content in filesand then remove that dubles
-        dupl = getDuple(lastFL);
+        //dupl = getDuple(lastFL);
     }
 
     /**
@@ -97,13 +109,14 @@ public class RemoverDuplicates {
 
         long d1 = d - maxFileAge * numberOfDays;
         dupl = new ArrayList<>();
-        rootDir = fa.getAppRootPath(true);
+//        rootDir = fa.getAppRootPath(true);
         //ddg.setRootDir(rootDir + "/satdata");
-        ddg.goDeep(rootDir + "/satdata", true);
-        System.out.println("");
+        //ddg.goDeep(rootDir + "/satdata", true);
+        ddg.goDeep(rootDir, true);
+        System.out.println(" Investigeying folder: " + rootDir);
         System.out.println("    ************   Remove  prepare  ******* ");
         System.out.println("           Prepare to remove duple content files"
-                + " in " + rootDir + "/satdata, "
+                + " in " + rootDir + " , "
                 + " created  after " + new Date(d1) + "... ");
 // refresh files, that older then dl
         getFilesAfter(d1);
@@ -118,6 +131,7 @@ public class RemoverDuplicates {
      */
     private void getFilesAfter(long age) {
         lastFL.clear();
+        System.out.println("  " + ddg.getDirToInvestigate());
         List<File> fl = ddg.getFileList();
         Date dd = new Date(age);
         System.out.println(" ================== Files,  which are older then " + dd + "   ==================   ");
@@ -173,6 +187,7 @@ public class RemoverDuplicates {
         System.out.println("");
         System.out.println("     Method " + this.getClass().getCanonicalName() + ".hasContent(File f, List<File> fl)");
         System.out.println("     Checking, has the file f the same content as in some file of list of files. if so, the file removes from the hard");
+        System.out.println("     Testing a file " + f.getAbsolutePath() + "...");
         if (f.isFile()) {
 
             if (f.length() < 2) {
@@ -187,58 +202,76 @@ public class RemoverDuplicates {
             }
             String tss = " ";
             testContent = testFA.getFileContent();
-            tss += " TEST CONTENT " + testContent;
-////            System.out.println(tss);
+//            tss += " TEST CONTENT " + testContent;
+//            System.out.println(tss);
             tss = "";
             testContent = pns.utils.strings.RStrings.removeSpaces(testContent);
-            for (int k = 0; k < fl.size(); k++) {
-                File tmpf = fl.get(k);
-                boolean sameFile = f.getAbsolutePath().trim().equals(tmpf.getAbsolutePath().trim());
-//                tss += " --> f: " + f.getAbsolutePath();
-//                tss += System.lineSeparator() + "  same: "
-//                        + "       " + sameFile + " ; " + tmpf.getAbsolutePath();
-//                tss += System.lineSeparator() + "  TEST content " + System.lineSeparator()
-//                        + testContent
-//                        + System.lineSeparator();
+            long testSize = 0, tmpSize = 0;
+            if (f.exists()) {
+                testSize = f.length();
 
-                //System.out.println(tss);
-                if (!sameFile) {
-                    FileActor tmpFA = new FileActor();
-                    tmpFA.fileRead(tmpf.getAbsolutePath());
-                    String tmpContent = tmpFA.getFileContent();
+                for (int k = 0; k < fl.size(); k++) {
+                    long ts = System.currentTimeMillis();
+                    File tmpf = fl.get(k);
+                    boolean sameFile = f.getAbsolutePath().trim().equals(tmpf.getAbsolutePath().trim());
+//                tss += "Test # " + k + System.lineSeparator();
+//                tss += " --> f: " + f.getAbsolutePath();
+//                tss += " Testing File " + System.lineSeparator() + "  is same name: "
+//                        + "       " + sameFile + " ; " + tmpf.getAbsolutePath();
+//                tss += System.lineSeparator() + "      -----------------    TEST content " + System.lineSeparator()
+//                        + testContent
+//
+                    if (tmpf.exists()) {
+                        tmpSize = tmpf.length();
+                    }
+                    boolean needTest = tmpf.exists() && f.exists() && (testSize == tmpSize);
+
+//                System.out.println(tss);
+                    if (!sameFile && needTest) {
+                        FileActor tmpFA = new FileActor();
+                        tmpFA.fileRead(tmpf.getAbsolutePath());
+                        String tmpContent = tmpFA.getFileContent();
 //                    String ttt = "asd vfr  ttr jhihui jjghju  jgu  jhuihu" + System.lineSeparator() + "L  OO 987  77 gEEE ";
 //                    System.out.println(" ttt Str " + ttt);
 //                    ttt = pns.utils.RStrings.removeSpaces(ttt);
 //                    System.out.println("    ttt REMOVE SPACES  " + ttt);
-                    tss += "     TMP content" + System.lineSeparator() + tmpContent + System.lineSeparator();
+                        tss += "     TMP content" + System.lineSeparator() + tmpContent + System.lineSeparator();
 
-                    tmpContent = pns.utils.strings.RStrings.removeSpaces(tmpContent);
+                        tmpContent = pns.utils.strings.RStrings.removeSpaces(tmpContent);
 
-                    String[] tmpParts = tmpContent.split(testContent);
-                    String[] testParts = testContent.split(tmpContent);
-                    int has = testParts.length + tmpParts.length;
-                    boolean res = testContent.equals(tmpContent);
+                        String[] tmpParts = tmpContent.split(testContent);
+                        String[] testParts = testContent.split(tmpContent);
+                        int has = testParts.length + tmpParts.length;
+                        boolean res = testContent.equals(tmpContent);
+//                    System.out.println("    /////////////////// ***** \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   ");
+//                    System.out.println(System.lineSeparator());
 
+                        System.out.println("            Result trst: for  Files  " + f.getAbsolutePath() + " AND " + tmpf.getAbsolutePath());
+                        System.out.println("            equal  " + res);
 //                    System.out.println(k + System.lineSeparator() + tss + System.lineSeparator() + " result " + res + "  has: " + has);
-                    if (res) {
-                        if (tmpf.exists()) {
-                            String tmpfParentName = tmpf.getParentFile().getAbsolutePath();
-                            if (tmpf.delete()) {
-                                dupl.remove(tmpf);
-                                System.out.println(" The file " + tmpf.getName() + " has the dubbed content and then  deleted");
+                        if (res) {
+                            if (tmpf.exists()) {
+                                String tmpfParentName = tmpf.getParentFile().getAbsolutePath();
+                                if (tmpf.delete()) {
+                                    dupl.remove(tmpf);
+                                    System.out.println(" The file " + tmpf.getName() + " has the dubbed content and then  deleted");
+                                }
+
                             }
-
+                            return true;
                         }
-                        return true;
                     }
+//                long te = System.currentTimeMillis();
+//                long delta = te - ts;
+//                System.out.println("   ***************  step # " + k + "  " + delta + "ms");
                 }
-
             }
 //            System.out.println("");
 //            System.out.println("");
 //            System.out.println("**************************");
         } else {
         }
+
         return false;
     }
 

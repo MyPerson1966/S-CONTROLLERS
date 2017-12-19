@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -31,7 +32,7 @@ public class XXParserSWEB extends SXParser {
     private String login;
     private String thisElement = "";
     private String password;
-    private String archivePath = "";
+    private String archivePath = "--";
     private int maxDaysFileLive = 100;
 
     /**
@@ -117,6 +118,9 @@ public class XXParserSWEB extends SXParser {
         }
         if (thisElement.trim().equals("password")) {
             password = elementValue;
+        }
+        if (thisElement.trim().equals("archivePath")) {
+            archivePath = elementValue;
         }
         if (thisElement.trim().equals("maxDaysFileLive")) {
             maxDaysFileLive = Integer.parseInt(elementValue);
