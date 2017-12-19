@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pns.kiam.sweb.controllers.archvedb;
 
 import java.io.File;
@@ -19,15 +14,21 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import pns.fileUtils.FileSpecActor;
+import pns.kiam.commonserrvice.DownloadContentController;
 import pns.kiam.entities.satellites.FileMeasured;
 import pns.kiam.entities.satellites.SatelliteMeasurement;
 import pns.kiam.sweb.controllers.AbstractController;
+import pns.kiam.sweb.controllers.app.XXParserSWEB;
 
 /**
  *
@@ -43,6 +44,11 @@ public class ArchiveFileController extends AbstractController implements Seriali
 
     private String tmpName = "";
     private String filterValue = "";
+
+    @EJB
+    private XXParserSWEB xxparser;
+    @EJB
+    private DownloadContentController downloadContentController;
 
     @PostConstruct
     public void initial() {
@@ -125,14 +131,23 @@ public class ArchiveFileController extends AbstractController implements Seriali
 
     public void recDownload(FileMeasured fm) {
         selectFile(fm);
-        File f = new File(tmpName);
-        System.out.println("Download: " + f.getAbsolutePath());
-//        try {
-//            fdc.downloadFile(f);
-//        } catch (IOException ex) {
-//            Logger.getLogger(FileViewController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        f.delete();
+        if (fileMeasured != null) {
+            System.out.println("  --------->> FN name " + fileMeasured.getFileName());
+            try {
+                downloadContentController.downloadData(fileMeasured.getContent(), fileMeasured.getFileName());
+            } catch (IOException ex) {
+                Logger.getLogger(ArchiveFileController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+//        File f = new File(tmpName);
+//        System.out.println("`````````````````>>>Download: " + f.getAbsolutePath());
+////        try {
+////            fdc.downloadFile(f);
+////        } catch (IOException ex) {
+////            Logger.getLogger(FileViewController.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+//        f.delete();
     }
 
     public String dataSize(FileMeasured fm) {
