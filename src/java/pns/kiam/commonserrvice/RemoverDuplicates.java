@@ -123,6 +123,12 @@ public class RemoverDuplicates {
 
     }
 
+    public List<File> getFileList() {
+        ddg.goDeep(rootDir, true);
+
+        return ddg.getFileList();
+    }
+
     /**
      * generate list of files, that older then a given age
      *
@@ -132,7 +138,7 @@ public class RemoverDuplicates {
     private void getFilesAfter(long age) {
         lastFL.clear();
         System.out.println("  " + ddg.getDirToInvestigate());
-        List<File> fl = ddg.getFileList();
+        List<File> fl = getFileList();
         Date dd = new Date(age);
         System.out.println(" ================== Files,  which are older then " + dd + "   ==================   ");
 //        System.out.println("  fl.size " + fl.size());
@@ -207,26 +213,28 @@ public class RemoverDuplicates {
             tss = "";
             testContent = pns.utils.strings.RStrings.removeSpaces(testContent);
             long testSize = 0, tmpSize = 0;
-            if (f.exists()) {
-                testSize = f.length();
 
-                for (int k = 0; k < fl.size(); k++) {
+            testSize = f.length();
+            System.out.println("     File's collection size is " + fl.size());
+            for (int k = 0; k < fl.size(); k++) {
+                System.out.println(" Iteration #  " + k);
+                if (f.exists()) {
                     long ts = System.currentTimeMillis();
                     File tmpf = fl.get(k);
                     boolean sameFile = f.getAbsolutePath().trim().equals(tmpf.getAbsolutePath().trim());
-//                tss += "Test # " + k + System.lineSeparator();
-//                tss += " --> f: " + f.getAbsolutePath();
-//                tss += " Testing File " + System.lineSeparator() + "  is same name: "
-//                        + "       " + sameFile + " ; " + tmpf.getAbsolutePath();
-//                tss += System.lineSeparator() + "      -----------------    TEST content " + System.lineSeparator()
-//                        + testContent
-//
+//                    tss += "Test # " + k + System.lineSeparator();
+//                    tss += " --> f: " + f.getAbsolutePath();
+//                    tss += " Testing File " + System.lineSeparator() + "  is same name: "
+//                            + "       " + sameFile + " ; " + tmpf.getAbsolutePath();
+//                tss += System.lineSeparator() + "      -----------------    TEST content " + System.lineSeparator()'"  ";'
+                    //+ testContent
+
                     if (tmpf.exists()) {
                         tmpSize = tmpf.length();
                     }
                     boolean needTest = tmpf.exists() && f.exists() && (testSize == tmpSize);
 
-//                System.out.println(tss);
+//                    System.out.println(tss);
                     if (!sameFile && needTest) {
                         FileActor tmpFA = new FileActor();
                         tmpFA.fileRead(tmpf.getAbsolutePath());
@@ -246,8 +254,8 @@ public class RemoverDuplicates {
 //                    System.out.println("    /////////////////// ***** \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   ");
 //                    System.out.println(System.lineSeparator());
 
-                        System.out.println("            Result trst: for  Files  " + f.getAbsolutePath() + " AND " + tmpf.getAbsolutePath());
-                        System.out.println("            equal  " + res);
+//                        System.out.println("            Result trst: for  Files  " + f.getAbsolutePath() + " AND " + tmpf.getAbsolutePath());
+//                        System.out.println("            equal  " + res);
 //                    System.out.println(k + System.lineSeparator() + tss + System.lineSeparator() + " result " + res + "  has: " + has);
                         if (res) {
                             if (tmpf.exists()) {
@@ -258,6 +266,7 @@ public class RemoverDuplicates {
                                 }
 
                             }
+
                             return true;
                         }
                     }
