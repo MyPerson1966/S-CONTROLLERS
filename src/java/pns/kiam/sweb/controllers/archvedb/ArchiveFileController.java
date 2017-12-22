@@ -24,7 +24,10 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import pns.fileUtils.FileSpecActor;
+import pns.kiam.Utils.FormatClassificator;
+
 import pns.kiam.commonserrvice.DownloadContentController;
+import pns.kiam.commonserrvice.FormatCoordinator;
 import pns.kiam.entities.satellites.FileMeasured;
 import pns.kiam.entities.satellites.SatelliteMeasurement;
 import pns.kiam.sweb.controllers.AbstractController;
@@ -40,10 +43,12 @@ public class ArchiveFileController extends AbstractController implements Seriali
     private FileMeasured fileMeasured;
     List<FileMeasured> fileMeasuredList = new ArrayList<>();
 
-    private CriteriaQuery<FileMeasured> cq;
+    protected CriteriaQuery<FileMeasured> cq;
 
     private String tmpName = "";
     private String filterValue = "";
+    protected String fileType = "";
+    private FormatCoordinator formatCoordinator;
 
     @EJB
     private XXParserSWEB xxparser;
@@ -203,4 +208,10 @@ public class ArchiveFileController extends AbstractController implements Seriali
         fileMeasuredList = result;
     }
 
+    protected void getType(FileMeasured fm) {
+        formatCoordinator = new FormatCoordinator();
+        formatCoordinator.classificate(fm.getContent());
+        fileType = formatCoordinator.getFormatType();
+
+    }
 }

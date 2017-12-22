@@ -207,7 +207,7 @@ public class RemoverDuplicates {
                 testFA.fileRead(f.getAbsolutePath());
             }
             String tss = " ";
-            testContent = testFA.getFileContent();
+            testContent = testFA.getFileContent().toUpperCase();
 //            tss += " TEST CONTENT " + testContent;
 //            System.out.println(tss);
             tss = "";
@@ -238,7 +238,7 @@ public class RemoverDuplicates {
                     if (!sameFile && needTest) {
                         FileActor tmpFA = new FileActor();
                         tmpFA.fileRead(tmpf.getAbsolutePath());
-                        String tmpContent = tmpFA.getFileContent();
+                        String tmpContent = tmpFA.getFileContent().toUpperCase();
 //                    String ttt = "asd vfr  ttr jhihui jjghju  jgu  jhuihu" + System.lineSeparator() + "L  OO 987  77 gEEE ";
 //                    System.out.println(" ttt Str " + ttt);
 //                    ttt = pns.utils.RStrings.removeSpaces(ttt);
